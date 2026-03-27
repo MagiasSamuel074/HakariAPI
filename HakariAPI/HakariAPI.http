@@ -1,0 +1,6 @@
+@HakariAPI_HostAddress = http://localhost:5032
+
+GET {{HakariAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
