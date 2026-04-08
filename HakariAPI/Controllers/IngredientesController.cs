@@ -10,7 +10,7 @@ namespace HakariAPI.Controllers
     [ApiController]
     public class IngredientesController : ControllerBase
     {
-       //se declara aqui el campo privado para almacenar el contexto de la base de datos.
+        //se declara aqui el campo privado para almacenar el contexto de la base de datos.
         private readonly AppDbContext _context;
 
         //Aqui le pedimos a Program.cs que nos preste la conexion a DB para almacenarlo o inyectarlo al campo
@@ -31,7 +31,7 @@ namespace HakariAPI.Controllers
         //Equivalente a INSERT INTO
         //POST: api/ingredientes
         [HttpPost]
-        public async Task<ActionResult<Ingrediente>> PostIngrediente (Ingrediente nuevoIngrediente)
+        public async Task<ActionResult<Ingrediente>> PostIngrediente(Ingrediente nuevoIngrediente)
         {
 
             //Le decimos a EF que procese la info de este objeto para la tabla ingreidientes
@@ -40,7 +40,7 @@ namespace HakariAPI.Controllers
             //se guarda en la tabla y es equivalente a COMMIT en SQL
             await _context.SaveChangesAsync();
 
-           // Respondemos que se creó con éxito y mandamos el objeto de vuelta
+            // Respondemos que se creó con éxito y mandamos el objeto de vuelta
             return CreatedAtAction(nameof(GetIngredientes), new { id = nuevoIngrediente.Idingrediente }, nuevoIngrediente);
         }
 
@@ -80,6 +80,23 @@ namespace HakariAPI.Controllers
             }
 
             //retorna 204(exito sin contenido)
+            return NoContent();
+        }
+
+        //Metodo DELETE
+        [HttpDelete("{ID}")]
+        public async Task<IActionResult>DeleteIngrediente(int ID)
+        {
+            var ingrediente = await _context.Ingredientes.FindAsync(ID);
+
+            if (ingrediente == null)
+            {
+                return NotFound();
+            }
+
+            _context.Ingredientes.Remove(ingrediente);
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
     }
