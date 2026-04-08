@@ -43,5 +43,44 @@ namespace HakariAPI.Controllers
            // Respondemos que se creó con éxito y mandamos el objeto de vuelta
             return CreatedAtAction(nameof(GetIngredientes), new { id = nuevoIngrediente.Idingrediente }, nuevoIngrediente);
         }
+
+
+        //Equivalente a UPDATE con WHERE
+        //PUT: api/Ingredientes/5
+        [HttpPut("{ID}")]
+        public async Task<IActionResult> PutIngrediente(int ID, Ingrediente IngredienteActualizado)
+        {
+            //el "id" de la url coincide con el id del modelo?
+            if (ID != IngredienteActualizado.Idingrediente)
+            {
+                return BadRequest();
+            }
+
+            //le decimos a EF que este objeto ya ha a sido creado anteriormente y que lo prepare para sobreescribirse.
+            _context.Entry(IngredienteActualizado).State = EntityState.Modified;
+
+            try
+            {
+                //intentamos guardar el objeto o registro en SQL
+                await _context.SaveChangesAsync();
+            }
+
+            catch (DbUpdateConcurrencyException)
+            {
+
+                //si no existe el ID en la DB, envia error 404 NOT FOUND
+                if (!_context.Ingredientes.Any(e => e.Idingrediente == ID))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            //retorna 204(exito sin contenido)
+            return NoContent();
+        }
     }
 }
